@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheerCheck</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>CheerCheck</h1>
+    <div id="video-container">
+        <video id="video" autoplay></video>
+        <br>
+        <button id="capture-btn">Capture</button>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <img id="photo" src="" style="display: none;">
+    </div>
+
+    <div id="result"></div>
+    <div id="message"></div>
+    
+    <button id="end-session-btn">End Session</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const photo = document.getElementById('photo');
+            const captureButton = document.getElementById('capture-btn');
+            const endSessionButton = document.getElementById('end-session-btn');
+
+            // Function to capture and analyze image & display messages accordingly
+            function captureAndAnalyze() {
+                const context = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convert the canvas to base64 data URL
+                const imageData = canvas.toDataURL('image/jpeg');
+
+                // Pass the captured image to analyze function
+                fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: imageData }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    document.getElementById('result').innerText = data.dominant_emotion;
+                    if (data.dominant_emotion === "fear" || data.dominant_emotion === "sad" || data.dominant_emotion === "angry") {
+                        document.getElementById('message').innerText = "Take a deep breath <3 If you are confused about a topic, please reach out to the teacher after class.";
+                    } else if (data.dominant_emotion === "surprise") {
+                        document.getElementById('message').innerText = "Interesting info, right?";
+                    }
+                    else {
+                        document.getElementById('message').innerText = "";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            // Check if the browser supports mediaDevices and getUserMedia
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                // Get user media/permission
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(stream) {
+                        video.srcObject = stream;
+                    })
+                    .catch(function(err) {
+                        console.error('Error accessing the webcam:', err);
+                    });
+            } else {
+                console.error('getUserMedia is not supported');
+            }
+
+            // Capture button click event
+            captureButton.addEventListener('click', function() {
+                captureAndAnalyze();
+            });
+
+            // End Session button click event
+            endSessionButton.addEventListener('click', function() {
+                fetch('/end_session', {
+                    method: 'POST',
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            // Interval to automatically capture and analyze image every minute
+            setInterval(captureAndAnalyze, 60000); // 60000 milliseconds = 1 minute
+        });
+    </script>
+</body>
+</html>

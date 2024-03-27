@@ -1,0 +1,4 @@
+deepface
+tensorflow==2.15.1
+flask
+yagmail
