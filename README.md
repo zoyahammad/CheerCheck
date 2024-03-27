@@ -20,6 +20,8 @@ The teachers can then use this information to figure out how the students are re
 
 ![two](public/images/2.jpeg)
 
+![hree](public/images/3.png)
+
 # Tech Stack
 
 * ```Python```
