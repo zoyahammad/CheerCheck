@@ -74,6 +74,6 @@ def send_email(emotions_list):
 * Open the designated server in your browser e.g, ```http://127.0.0.1:5000```
 
 
-Presentation: 
+Presentation: https://docs.google.com/presentation/d/1tioSoOg631juzU5rWgtlpk4PFz11XePMHpo6tjRqYjg/edit?usp=drivesdk
 
-Youtube: 
+Youtube: https://www.youtube.com/watch?v=Q0SpQfakKfI
