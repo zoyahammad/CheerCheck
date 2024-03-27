@@ -16,6 +16,10 @@ At the end each session, a mood report is generated and emailed to the teacher o
 
 The teachers can then use this information to figure out how the students are responding to the course material. For example which parts of the lectures were more boring or confusing etc. 
 
+![one](public/images/1.jpeg)
+
+![two](public/images/2.jpeg)
+
 # Tech Stack
 
 * ```Python```
